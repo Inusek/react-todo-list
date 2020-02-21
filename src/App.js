@@ -7,35 +7,47 @@ import TodoList from "./components/TodoList";
 // Showing vs-codegithub setup
 export default class App extends Component {
     state = {
-        items: [
-            {
-                id: 1,
-                title: "Wake up"
-            },
-            {
-                id: 2,
-                title: "breakfast"
-            }
-        ],
+        items: [],
         id: uuid(),
         item: "",
         editItem: false
     };
 
     handleChange = e => {
-        console.log("handle change");
+        this.setState({
+            item: e.target.value
+        });
     };
     handleSubmit = e => {
-        console.log("handle submit");
+        e.preventDefault();
+        const newItem = {
+            id: this.state.id,
+            title: this.state.item
+        };
+        const updatedItems = [...this.state.items, newItem];
+        this.setState({
+            items: updatedItems,
+            item: "",
+            id: uuid(),
+            editItem: false
+        });
     };
     clearList = () => {
-        console.log("Clear list method");
+        this.setState({ items: [] });
     };
     handleDelete = id => {
-        console.log(`handle edit ${id}`);
+        const filterItems = this.state.items.filter(item => item.id !== id);
+        this.setState({ items: filterItems });
     };
     handleEdit = id => {
-        console.log(`edit ${id}`);
+        const filterItems = this.state.items.filter(item => item.id !== id);
+        const selectedItem = this.state.items.find(item => item.id === id);
+        this.setState({
+            items: filterItems,
+            item: selectedItem.title,
+            id: id,
+            editItem: true
+        });
     };
 
     render() {
@@ -53,7 +65,7 @@ export default class App extends Component {
                             editItem={this.state.editItem}
                         />
                         <TodoList
-                            item={this.state.items}
+                            items={this.state.items}
                             clearList={this.clearList}
                             handleDelete={this.handleDelete}
                             handleEdit={this.handleEdit}
